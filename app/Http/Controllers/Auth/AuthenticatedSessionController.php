@@ -27,10 +27,23 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        
+        $user = $request->user();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        //check user active
+        if ($user->active == true) {
+            //check admin
+            if ($request->usertype == 'admin') {
+                return redirect('admin.dashboard');
+            }
+            return redirect()->intended(route('admin.dashboard', absolute: false));
+        } else {
+            auth()->logout();
+            return back()->withInput()->withErrors(['not_active' => 'These credentials do not match our records.']);
+        } 
+
+        //return redirect()->intended(route('dashboard', absolute: false));
     }
-
     /**
      * Destroy an authenticated session.
      */
