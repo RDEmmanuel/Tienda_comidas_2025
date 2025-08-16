@@ -28,7 +28,7 @@
                                     placeholder="Buscar"
                                     class="w-full text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 pl-4 pr-10 py-2 h-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
                                 @if(request('search'))
-                                    <a href="{{ route('admin.productos', ['categoria_id' => request('categoria_id'), 'visible' => request('visible')]) }}"
+                                    <a href="{{ route('admin.productos', ['categoria_id' => request('categoria_id'), 'estado' => request('estado')]) }}"
                                        class="absolute right-4 text-gray-400 hover:text-red-500 text-xl font-bold"
                                        title="Limpiar búsqueda">
                                         <i class="fa-solid fa-delete-left"></i>
@@ -56,13 +56,13 @@
                                 </select>
                             </div>
 
-                            {{-- Filtro Visible/No visible --}}
+                            {{-- Filtro Estado/true-false --}}
                             <div>
-                                <select name="visible"
+                                <select name="estado"
                                         class="w-full border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-2"
                                         onchange="this.form.submit()">
-                                    <option value="true" {{ request('visible') === 'true' ? 'selected' : '' }}>Visibles</option>
-                                    <option value="false" {{ request('visible') === 'false' ? 'selected' : '' }}>Ocultos</option>
+                                    <option value="true" {{ request('estado') === 'true' ? 'selected' : '' }}>Visibles</option>
+                                    <option value="false" {{ request('estado') === 'false' ? 'selected' : '' }}>Ocultos</option>
                                 </select>
                             </div>
                         </form>
@@ -88,7 +88,7 @@
                                     <th class="px-6 py-4">Categoría</th>
                                     <th class="px-6 py-4">Stock</th>
                                     <th class="px-6 py-4">Precio Venta</th>
-                                    <th class="px-6 py-4">Visible</th>
+                                    <th class="px-6 py-4">Estado</th>
                                     <th class="px-6 py-4">Acciones</th>
                                 </tr>
                             </thead>

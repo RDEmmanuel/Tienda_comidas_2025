@@ -49,7 +49,7 @@ class ProductoController extends Controller
         $productos->appends($request->only('search', 'categoria_id', 'estado'));
 
         // 📌 Título dinámico
-        $titulo = match($request->input('visible')) {
+        $titulo = match($request->input('estado')) {
             '0', 'false' => 'Productos Ocultos',
             '1', 'true'  => 'Productos Visibles',
             default      => 'Productos Visibles'
