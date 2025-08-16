@@ -16,6 +16,10 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+
+            {{-- 🔹 Navbar para clientes invitados --}}
+            @include('layouts.guest_navigation')
+            
             <main>
                 {{ $slot }}
             </main>
