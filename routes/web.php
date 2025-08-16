@@ -39,6 +39,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     //mostrar producto
     Route::get('admin/productos/{producto}', [ProductoController::class, 'show'])->name('admin.productos.show');
 
+    // Cambiar estado del producto (eliminar o restaurar)
+    Route::patch('/productos/{id}/estado', [ProductoController::class, 'cambiar_estado'])->name('admin.productos.cambiar_estado');
+
     //CATEGORIAS-------------------------------------------------------------------------------------------------------------
     Route::get('admin/categorias', [CategoriaController::class, 'index'])->name('admin.categorias.index');
 
