@@ -51,8 +51,8 @@ class ProductoController extends Controller
         // 📌 Título dinámico
         $titulo = match($request->input('estado')) {
             '0', 'false' => 'Productos Ocultos',
-            '1', 'true'  => 'Productos Visibles',
-            default      => 'Productos Visibles'
+            '1', 'true'  => 'Productos',
+            default      => 'Productos'
         };
 
         // 🔹 Agregar categoría al título si está seleccionada
@@ -132,5 +132,22 @@ class ProductoController extends Controller
     {
         $producto->delete();
         return redirect()->route('admin.productos.index')->with('success', 'Producto eliminado correctamente.');
+    }
+
+    /**
+     * Cambiar estado de visibilidad del producto
+     */
+    public function cambiar_estado($id)
+    {
+        $producto = Producto::findOrFail($id);
+
+        // Cambiar visible: si es true pasa a false y viceversa
+        $producto->estado = !$producto->estado;
+        $producto->save();
+
+        $estado = $producto->estado ? 'visible' : 'oculto';
+
+        // Redireccionar con mensaje de éxito
+        return back()->with('success', "El producto ahora está {$estado}.");
     }
 }

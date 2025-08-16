@@ -115,26 +115,44 @@
                                         <td class="px-6 py-3">${{ number_format($producto->precio_venta, 2, ',', '.') }}</td>
                                         <td class="px-6 py-3">
                                             <span class="{{ $producto->estado ? 'text-green-600' : 'text-red-500' }}">
-                                                {{ $producto->estado ? 'Sí' : 'No' }}
+                                                {{ $producto->estado ? 'Visible' : 'Oculto' }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-3">
                                             <div class="flex justify-center items-center gap-x-4">
-                                                {{-- Agregar al carrito --}}
-                                                <div></div>
                                                 {{-- Editar --}}
                                                 <a href="{{ route('admin.productos.edit', $producto->id) }}"
                                                    class="text-sm font-medium text-gray-500 dark:text-gray-300 dark:hover:text-blue-500 hover:text-blue-500"
                                                    title="Editar">
-                                                    <i class="fa-solid fa-pencil"></i>Editar
+                                                    <i class="fa-solid fa-pencil"></i>
                                                 </a>
                                                 {{-- Ver --}}
                                                 <a href="{{ route('admin.productos.show', $producto->id) }}"
                                                    class="text-sm font-medium text-gray-500 dark:text-gray-300 dark:hover:text-blue-500 hover:text-blue-500"
                                                    title="Ver detalles">
-                                                    <i class="fa-solid fa-info"></i>Ver
+                                                    <i class="fa-solid fa-info"></i>
                                                 </a>
-                                                
+                                                {{-- Eliminar (cambiar estado) --}}
+                                                    <form action="{{ route('admin.productos.cambiar_estado', $producto->id) }}" 
+                                                        method="POST" 
+                                                        onsubmit="return confirm('¿Estás seguro de que deseas cambiar el estado de este producto?');" 
+                                                        style="display:inline">
+                                                        @csrf
+                                                        @method('PATCH')
+
+                                                        @if($producto->estado)
+                                                            {{-- Si está visible → mostrar trash (ocultar/eliminar) --}}
+                                                            <button type="submit" title="Ocultar" class="text-red-500 hover:text-red-400">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        @else
+                                                            {{-- Si está oculto → mostrar icono activar --}}
+                                                            <button type="submit" title="Activar" class="text-green-500 hover:text-green-400">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                        @endif
+                                                    </form>
+                                                {{-- FIN Eliminar --}}
                                             </div>
                                         </td>
                                     </tr>
