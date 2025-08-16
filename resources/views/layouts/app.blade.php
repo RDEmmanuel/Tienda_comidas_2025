@@ -14,6 +14,8 @@
         <!-- font awesome -->
         <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
 
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <script src="https://unpkg.com/flowbite@latest/dist/flowbite.min.js"></script>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -35,6 +37,9 @@
             <main>
                 {{ $slot }}
             </main>
+
+            <!-- boton dark-light mode -->
+            @include('components.theme-toggle')
         </div>
     </body>
 </html>
