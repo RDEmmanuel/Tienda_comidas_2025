@@ -26,6 +26,9 @@
                         {{ __('Categorias') }}
                     </x-nav-link>
                 </div>
+                <div class="hidden sm:flex sm:items-center sm:ms-6">
+                    <livewire:carrito-badge />
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
