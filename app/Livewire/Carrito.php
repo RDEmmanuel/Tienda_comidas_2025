@@ -12,6 +12,7 @@ class Carrito extends Component
 {
     public $carrito = [];
     public $direccion_envio = ''; // ✅ Campo para la dirección
+    public $metodo_pago = 'efectivo'; // ✅ Campo para el método de pago, por defecto 'efectivo'
 
     protected $listeners = [
         'agregarProducto'   => 'agregarProducto',
@@ -99,6 +100,7 @@ class Carrito extends Component
         // ✅ Validamos dirección antes de guardar
         $this->validate([
             'direccion_envio' => 'required|string|min:5',
+            'metodo_pago' => 'required|in:efectivo,transferencia',
         ], [
             'direccion_envio.required' => 'La dirección de envío es obligatoria.',
             'direccion_envio.min' => 'La dirección debe tener al menos 5 caracteres.',
@@ -111,17 +113,25 @@ class Carrito extends Component
                 'total'           => $this->calcularTotal(),
                 'direccion_envio' => $this->direccion_envio, // ✅ Se guarda lo que escribió el cliente
                 'estado'          => 'pendiente',
-                'metodo_pago'     => 'efectivo',
+                'metodo_pago'     => $this->metodo_pago,
             ]);
 
             foreach ($this->carrito as $item) {
+                // Bloqueo pesimista para evitar carreras de stock
+                $producto = Producto::lockForUpdate()->findOrFail($item['id']);
+                if ($producto->stock < $item['cantidad']) {
+                    throw new \Exception("Stock insuficiente para el producto {$producto->nombre}.");
+                }
+
                 PedidoDetalle::create([
-                    'pedido_id'       => $pedido->id,
-                    'producto_id'     => $item['id'],
-                    'cantidad'        => $item['cantidad'],
-                    'precio_unitario' => $item['precio'],
-                    'subtotal'        => $item['precio'] * $item['cantidad'],
+                    'pedido_id'          => $pedido->id,
+                    'producto_id'        => $item['id'],
+                    'cantidad'           => $item['cantidad'],
+                    'precio_unitario'    => $item['precio'],
+                    'subtotal'           => $item['precio'] * $item['cantidad'],
                 ]);
+
+                $producto->decrement('stock', $item['cantidad']);
             }
         });
 

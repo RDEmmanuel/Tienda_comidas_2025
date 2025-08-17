@@ -2,7 +2,7 @@
 
     @if (count($items) > 0)
 
-        <div class="flex-1 overflow-y-auto space-y-4">
+        <div class="flex-1 overflow-y-auto space-y-4 p-1">
 
             {{-- Grid de productos --}}
             @foreach ($items as $item)
@@ -16,18 +16,6 @@
                         </div>
                     </div>
 
-                    {{-- Cantidad --}}
-                    <!-- <div class="flex justify-center">
-                        <x-text-input 
-                            id="cantidad-{{ $item['id'] }}"
-                            type="number" 
-                            min="1"
-                            class="w-20 text-center"
-                            value="{{ $item['cantidad'] }}"
-                            wire:change="actualizarCantidad({{ $item['id'] }}, $event.target.value)" 
-                        />
-                    </div> -->
-
                     {{-- Precio total y eliminar --}}
                     <div class="flex justify-end items-center space-x-4">
                         <span class="font-semibold text-green-500 dark:text-green-500 text-xl">
@@ -40,8 +28,8 @@
             @endforeach
 
             {{-- Dirección de envío --}}
-            <div class="mt-6 grid grid-cols-1 lg:grid-cols-3">
-                <div class="col-span-1 lg:col-start-2">
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-1">
                     <x-input-label for="direccion_envio" :value="__('Dirección de envío')" class="dark:text-gray-300" />
                     <x-text-input 
                         id="direccion_envio" 
@@ -51,6 +39,15 @@
                         placeholder="Ej: Calle 1234"
                     />
                     <x-input-error :messages="$errors->get('direccion_envio')" class="mt-2 dark:text-red-400" />
+                </div>
+                <div class="col-span-1">
+                    <x-input-label for="metodo_pago" :value="__('Método de pago')" class="dark:text-gray-300" />
+                    <select id="metodo_pago" class="block mt-2 w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100" wire:model.defer="metodo_pago">
+                        <option value="">Seleccione un método</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="transferencia">Transferencia</option>
+                    </select>
+                    <x-input-error :messages="$errors->get('metodo_pago')" class="mt-2 dark:text-red-400" />
                 </div>
             </div> 
 
