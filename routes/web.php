@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Cliente\ProductoClienteController;
 
 Route::get('/', [ProductoClienteController::class, 'index'])->name('cliente.index');
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
