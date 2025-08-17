@@ -11,8 +11,15 @@ use Illuminate\Support\Facades\DB;
 class Carrito extends Component
 {
     public $carrito = [];
+    public $direccion_envio = ''; // ✅ Campo para la dirección
 
-    protected $listeners = ['agregarProducto'];
+    protected $listeners = [
+        'agregarProducto'   => 'agregarProducto',
+        'eliminarProducto'  => 'eliminarProducto',
+        'vaciarCarrito'     => 'vaciar',
+        'actualizarCantidad'=> 'actualizarCantidad',
+        'confirmarPedido'   => 'confirmar',
+    ];
 
     public function mount()
     {
@@ -35,14 +42,15 @@ class Carrito extends Component
             $this->carrito[$productoId]['cantidad']++;
         } else {
             $this->carrito[$productoId] = [
-                'id' => $producto->id,
-                'nombre' => $producto->nombre,
-                'precio' => $producto->precio_venta,
+                'id'       => $producto->id,
+                'nombre'   => $producto->nombre,
+                'precio'   => $producto->precio_venta,
                 'cantidad' => 1,
             ];
         }
 
         session()->put('carrito', $this->carrito);
+
         $this->dispatch('carrito-actualizado');
     }
 
@@ -50,14 +58,16 @@ class Carrito extends Component
     {
         unset($this->carrito[$productoId]);
         session()->put('carrito', $this->carrito);
-        $this->dispatch('carrito-actualizado');
+
+        $this->dispatch('carrito-actualizado')->to(\App\Livewire\CarritoBadge::class);
     }
 
     public function vaciar()
     {
         $this->carrito = [];
         session()->forget('carrito');
-        $this->dispatch('carrito-actualizado');
+
+        $this->dispatch('carrito-actualizado')->to(\App\Livewire\CarritoBadge::class);
     }
 
     public function actualizarCantidad($productoId, $cantidad)
@@ -71,7 +81,8 @@ class Carrito extends Component
             $this->carrito[$productoId]['cantidad'] = $cantidad;
             session()->put('carrito', $this->carrito);
         }
-        $this->dispatch('carrito-actualizado');
+
+        $this->dispatch('carrito-actualizado')->to(\App\Livewire\CarritoBadge::class);
     }
 
     public function calcularTotal()
@@ -85,28 +96,37 @@ class Carrito extends Component
 
     public function confirmar()
     {
+        // ✅ Validamos dirección antes de guardar
+        $this->validate([
+            'direccion_envio' => 'required|string|min:5',
+        ], [
+            'direccion_envio.required' => 'La dirección de envío es obligatoria.',
+            'direccion_envio.min' => 'La dirección debe tener al menos 5 caracteres.',
+        ]);
+
         DB::transaction(function () {
             $pedido = Pedido::create([
-                'adicional' => 0,
-                'descuento' => 0,
-                'total' => $this->calcularTotal(),
-                'direccion_envio' => 'Sin dirección', // Ajustar según formulario
-                'estado' => 'pendiente',
-                'metodo_pago' => 'efectivo',
+                'adicional'       => 0,
+                'descuento'       => 0,
+                'total'           => $this->calcularTotal(),
+                'direccion_envio' => $this->direccion_envio, // ✅ Se guarda lo que escribió el cliente
+                'estado'          => 'pendiente',
+                'metodo_pago'     => 'efectivo',
             ]);
 
             foreach ($this->carrito as $item) {
                 PedidoDetalle::create([
-                    'pedido_id' => $pedido->id,
-                    'producto_id' => $item['id'],
-                    'cantidad' => $item['cantidad'],
+                    'pedido_id'       => $pedido->id,
+                    'producto_id'     => $item['id'],
+                    'cantidad'        => $item['cantidad'],
                     'precio_unitario' => $item['precio'],
-                    'subtotal' => $item['precio'] * $item['cantidad'],
+                    'subtotal'        => $item['precio'] * $item['cantidad'],
                 ]);
             }
         });
 
         $this->vaciar();
+        $this->direccion_envio = ''; // ✅ limpiar campo después de confirmar
         session()->flash('success', 'Pedido confirmado con éxito ✅');
     }
 }

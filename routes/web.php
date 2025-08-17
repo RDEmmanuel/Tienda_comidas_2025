@@ -7,9 +7,9 @@ use App\Http\Controllers\CategoriaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('cliente/index');
-});
+use App\Http\Controllers\Cliente\ProductoClienteController;
+
+Route::get('/', [ProductoClienteController::class, 'index'])->name('cliente.index');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

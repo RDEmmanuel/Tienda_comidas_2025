@@ -1,4 +1,4 @@
-<div class="relative">
+    <div class="relative">
     <a href="{{ route('carrito') }}" class="text-gray-700 dark:text-gray-200">
         🛒
         @if ($cantidad > 0)

@@ -10,9 +10,8 @@
             </div>
 
             <!-- Right Side -->
-            <div class="flex items-center space-x-4">
-                {{-- Componente Livewire CarritoBadge --}}
-                @livewire('carrito-badge')
+            <div class="flex items-center gap-4">
+                <livewire:carrito-badge />
             </div>
         </div>
     </div>
