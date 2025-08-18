@@ -26,8 +26,10 @@
                         {{ __('Categorias') }}
                     </x-nav-link>
                 </div>
-                <div class="hidden sm:flex sm:items-center sm:ms-6">
-                    <livewire:carrito-badge />
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('admin.pedidos.index')" :active="request()->routeIs('admin.pedidos.*')">
+                        {{ __('Pedidos') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -88,6 +90,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.categorias.index')" :active="request()->routeIs('admin.categrias.*')">
                 {{ __('Categorias') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.pedidos.index')" :active="request()->routeIs('admin.pedidos.*')">
+                {{ __('Pedidos') }}
             </x-responsive-nav-link>
         </div>
 

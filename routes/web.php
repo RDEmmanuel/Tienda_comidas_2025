@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\PedidoController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -61,6 +63,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     //mostrar categoria
     Route::get('admin/categorias/{categoria}', [CategoriaController::class, 'show'])->name('admin.categorias.show');
+
+    //PEDIDOS -------------------------------------------------------------------------------------------------------------
+    // Listar pedidos
+    Route::get('admin/pedidos', [PedidoController::class, 'index'])->name('admin.pedidos.index');
+    Route::get('admin/pedidos/{pedido}', [PedidoController::class, 'show'])->name('admin.pedidos.show');
 
 
 });
