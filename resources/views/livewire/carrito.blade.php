@@ -50,16 +50,18 @@
                     <x-input-error :messages="$errors->get('metodo_pago')" class="mt-2 dark:text-red-400" />
                 </div>
             </div> 
-
-            {{-- Total --}}
-            <div class="mt-6 text-center text-2xl font-bold text-gray-800 dark:text-gray-100">
-                Total: ${{ number_format($total, 2) }}
+        </div>
+        
+        {{-- Total --}}
+        <div class="flex justify-center sticky bottom-0 pt-4">
+            <div class="text-center text-xl font-bold text-gray-800 dark:text-gray-100">
+                Total: <span class="text-2xl">${{ number_format($total, 2) }}</span> 
             </div>
         </div>
 
         {{-- Botón confirmar fijo al fondo --}}
-        <div class=" flex justify-center sticky bottom-0 py-4">
-            <button wire:click="confirmar" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg">
+        <div class="flex justify-center sticky bottom-0 py-4">
+            <button wire:click="confirmar" class="px-6 py-3 bg-red-500 hover:bg-red-700 text-white rounded-full">
                 Confirmar pedido
             </button>
         </div>

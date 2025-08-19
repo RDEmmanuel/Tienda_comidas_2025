@@ -11,17 +11,21 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Cliente\ProductoClienteController;
 
+// Cliente index blade (se muestran los productos)
 Route::get('/', [ProductoClienteController::class, 'index'])->name('cliente.index');
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
+// User dashboard
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Carrito de compras
 Route::get('/carrito', function () {
-    return view('carrito');
+    return view('carrito/carrito');
 })->name('carrito');
 
 Route::middleware('auth')->group(function () {
@@ -30,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Rutas para el Administrador
 Route::middleware(['auth', 'admin'])->group(function () {
 
     //admin dashboard
