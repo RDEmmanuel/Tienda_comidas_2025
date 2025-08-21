@@ -12,14 +12,14 @@ class Carrito extends Component
 {
     public $carrito = [];
     public $direccion_envio = ''; 
-    public $metodo_pago = 'efectivo'; 
+    public $metodo_pago = 'efectivo';
 
     protected $listeners = [
-        'agregarProducto'   => 'agregarProducto',
-        'eliminarProducto'  => 'eliminarProducto',
-        'vaciarCarrito'     => 'vaciar',
-        'actualizarCantidad'=> 'actualizarCantidad',
-        'confirmarPedido'   => 'confirmar',
+        'agregarProducto' => 'agregarProducto',
+        'eliminarProducto' => 'eliminarProducto',
+        'vaciarCarrito' => 'vaciar',
+        'actualizarCantidad' => 'actualizarCantidad',
+        'confirmarPedido' => 'confirmar',
     ];
 
     public function mount()
@@ -29,15 +29,13 @@ class Carrito extends Component
 
     public function render()
     {
-        // ✅ Siempre leer de la sesión para mantener sincronizado el carrito
-        $this->carrito = session()->get('carrito', []);
-
         return view('livewire.carrito', [
             'items' => $this->carrito,
             'total' => $this->calcularTotal(),
         ]);
     }
 
+    // Agregar producto
     public function agregarProducto($productoId)
     {
         $producto = Producto::findOrFail($productoId);
@@ -46,26 +44,30 @@ class Carrito extends Component
             $this->carrito[$productoId]['cantidad']++;
         } else {
             $this->carrito[$productoId] = [
-                'id'       => $producto->id,
-                'nombre'   => $producto->nombre,
-                'precio'   => $producto->precio_venta,
+                'id' => $producto->id,
+                'nombre' => $producto->nombre,
+                'precio' => $producto->precio_venta,
                 'cantidad' => 1,
             ];
         }
 
         session()->put('carrito', $this->carrito);
 
+        // Emitir evento global para actualizar badge
         $this->dispatch('carrito-actualizado');
     }
 
+    // Eliminar producto
     public function eliminarProducto($productoId)
     {
         unset($this->carrito[$productoId]);
         session()->put('carrito', $this->carrito);
 
+        // Emitir evento global
         $this->dispatch('carrito-actualizado');
     }
 
+    // Vaciar carrito
     public function vaciar()
     {
         $this->carrito = [];
@@ -74,8 +76,11 @@ class Carrito extends Component
         $this->dispatch('carrito-actualizado');
     }
 
+    // Actualizar cantidad
     public function actualizarCantidad($productoId, $cantidad)
     {
+        $cantidad = intval($cantidad);
+
         if ($cantidad <= 0) {
             $this->eliminarProducto($productoId);
             return;
@@ -89,6 +94,7 @@ class Carrito extends Component
         $this->dispatch('carrito-actualizado');
     }
 
+    // Calcular total
     public function calcularTotal()
     {
         $total = 0;
@@ -98,6 +104,7 @@ class Carrito extends Component
         return $total;
     }
 
+    // Confirmar pedido
     public function confirmar()
     {
         $this->validate([
@@ -110,34 +117,37 @@ class Carrito extends Component
 
         DB::transaction(function () {
             $pedido = Pedido::create([
-                'adicional'       => 0,
-                'descuento'       => 0,
-                'total'           => $this->calcularTotal(),
+                'adicional' => 0,
+                'descuento' => 0,
+                'total' => $this->calcularTotal(),
                 'direccion_envio' => $this->direccion_envio,
-                'estado'          => 'pendiente',
-                'metodo_pago'     => $this->metodo_pago,
+                'estado' => 'pendiente',
+                'metodo_pago' => $this->metodo_pago,
             ]);
 
             foreach ($this->carrito as $item) {
+                // Bloqueo pesimista para stock
                 $producto = Producto::lockForUpdate()->findOrFail($item['id']);
                 if ($producto->stock < $item['cantidad']) {
                     throw new \Exception("Stock insuficiente para el producto {$producto->nombre}.");
                 }
 
                 PedidoDetalle::create([
-                    'pedido_id'          => $pedido->id,
-                    'producto_id'        => $item['id'],
-                    'cantidad'           => $item['cantidad'],
-                    'precio_unitario'    => $item['precio'],
-                    'subtotal'           => $item['precio'] * $item['cantidad'],
+                    'pedido_id' => $pedido->id,
+                    'producto_id' => $item['id'],
+                    'cantidad' => $item['cantidad'],
+                    'precio_unitario' => $item['precio'],
+                    'subtotal' => $item['precio'] * $item['cantidad'],
                 ]);
 
                 $producto->decrement('stock', $item['cantidad']);
             }
         });
 
+        // Limpiar carrito y dirección
         $this->vaciar();
-        $this->direccion_envio = ''; 
+        $this->direccion_envio = '';
+
         session()->flash('success', 'Pedido confirmado con éxito ✅');
     }
 }
