@@ -8,14 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const html = document.documentElement;
     const toggleBtn = document.getElementById('toggle-theme');
 
-    // Aplicar tema al cargar
+    // Leer tema guardado
     const theme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    if (theme === 'dark' || (!theme && prefersDark)) {
+    // ✅ Forzar light por defecto si no hay nada guardado
+    if (theme === 'dark') {
         html.classList.add('dark');
     } else {
         html.classList.remove('dark');
+        localStorage.setItem('theme', 'light'); // guarda light por defecto
     }
 
     // Alternar tema manualmente
