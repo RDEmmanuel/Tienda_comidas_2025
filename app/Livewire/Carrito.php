@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\DB;
 class Carrito extends Component
 {
     public $carrito = [];
-    public $direccion_envio = ''; // ✅ Campo para la dirección
-    public $metodo_pago = 'efectivo'; // ✅ Campo para el método de pago, por defecto 'efectivo'
+    public $direccion_envio = ''; 
+    public $metodo_pago = 'efectivo'; 
 
     protected $listeners = [
         'agregarProducto'   => 'agregarProducto',
@@ -29,6 +29,9 @@ class Carrito extends Component
 
     public function render()
     {
+        // ✅ Siempre leer de la sesión para mantener sincronizado el carrito
+        $this->carrito = session()->get('carrito', []);
+
         return view('livewire.carrito', [
             'items' => $this->carrito,
             'total' => $this->calcularTotal(),
@@ -60,7 +63,7 @@ class Carrito extends Component
         unset($this->carrito[$productoId]);
         session()->put('carrito', $this->carrito);
 
-        $this->dispatch('carrito-actualizado')->to(\App\Livewire\CarritoBadge::class);
+        $this->dispatch('carrito-actualizado');
     }
 
     public function vaciar()
@@ -68,7 +71,7 @@ class Carrito extends Component
         $this->carrito = [];
         session()->forget('carrito');
 
-        $this->dispatch('carrito-actualizado')->to(\App\Livewire\CarritoBadge::class);
+        $this->dispatch('carrito-actualizado');
     }
 
     public function actualizarCantidad($productoId, $cantidad)
@@ -83,7 +86,7 @@ class Carrito extends Component
             session()->put('carrito', $this->carrito);
         }
 
-        $this->dispatch('carrito-actualizado')->to(\App\Livewire\CarritoBadge::class);
+        $this->dispatch('carrito-actualizado');
     }
 
     public function calcularTotal()
@@ -97,7 +100,6 @@ class Carrito extends Component
 
     public function confirmar()
     {
-        // ✅ Validamos dirección antes de guardar
         $this->validate([
             'direccion_envio' => 'required|string|min:5',
             'metodo_pago' => 'required|in:efectivo,transferencia',
@@ -111,13 +113,12 @@ class Carrito extends Component
                 'adicional'       => 0,
                 'descuento'       => 0,
                 'total'           => $this->calcularTotal(),
-                'direccion_envio' => $this->direccion_envio, // ✅ Se guarda lo que escribió el cliente
+                'direccion_envio' => $this->direccion_envio,
                 'estado'          => 'pendiente',
                 'metodo_pago'     => $this->metodo_pago,
             ]);
 
             foreach ($this->carrito as $item) {
-                // Bloqueo pesimista para evitar carreras de stock
                 $producto = Producto::lockForUpdate()->findOrFail($item['id']);
                 if ($producto->stock < $item['cantidad']) {
                     throw new \Exception("Stock insuficiente para el producto {$producto->nombre}.");
@@ -136,7 +137,7 @@ class Carrito extends Component
         });
 
         $this->vaciar();
-        $this->direccion_envio = ''; // ✅ limpiar campo después de confirmar
+        $this->direccion_envio = ''; 
         session()->flash('success', 'Pedido confirmado con éxito ✅');
     }
 }

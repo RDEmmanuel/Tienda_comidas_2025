@@ -9,16 +9,16 @@
                 <div class="grid grid-cols-2 gap-4 items-center px-2 py-8 border-b">
 
                     {{-- Nombre del producto --}}
-                    <div class="text-gray-800 dark:text-gray-100 font-semibold text-2xl">
-                        {{ $item['nombre'] }} <span class="text-lg font-normal text-gray-600 dark:text-gray-300 italic">x{{ $item['cantidad'] }}</span>
-                        <div class="text-sm text-gray-500 dark:text-gray-400 font-normal">
+                    <div class="text-gray-800 font-semibold text-2xl">
+                        {{ $item['nombre'] }} <span class="text-lg font-normal text-gray-600 italic">x{{ $item['cantidad'] }}</span>
+                        <div class="text-sm text-gray-500 font-normal">
                             ${{ number_format($item['precio'], 2) }}
                         </div>
                     </div>
 
                     {{-- Precio total y eliminar --}}
                     <div class="flex justify-end items-center space-x-4">
-                        <span class="font-semibold text-green-500 dark:text-green-500 text-xl">
+                        <span class="font-semibold text-green-500 text-xl">
                             ${{ number_format($item['precio'] * $item['cantidad'], 2) }}
                         </span>
                         <button wire:click="eliminarProducto({{ $item['id'] }})" class="text-red-600 hover:text-red-800 text-xl font-bold">✖</button>
@@ -30,19 +30,19 @@
             {{-- Dirección de envío --}}
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="col-span-1">
-                    <x-input-label for="direccion_envio" :value="__('Dirección de envío')" class="dark:text-gray-300" />
+                    <x-input-label for="direccion_envio" :value="__('Dirección de envío')" class="dark:text-gray-500" />
                     <x-text-input 
                         id="direccion_envio" 
                         type="text" 
-                        class="block mt-2 w-full"
+                        class="block mt-2 w-full dark:bg-gray-100 dark:border-gray-400 dark:text-gray-600"
                         wire:model.defer="direccion_envio"
                         placeholder="Ej: Calle 1234"
                     />
                     <x-input-error :messages="$errors->get('direccion_envio')" class="mt-2 dark:text-red-400" />
                 </div>
                 <div class="col-span-1">
-                    <x-input-label for="metodo_pago" :value="__('Método de pago')" class="dark:text-gray-300" />
-                    <select id="metodo_pago" class="block mt-2 w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100" wire:model.defer="metodo_pago">
+                    <x-input-label for="metodo_pago" :value="__('Método de pago')" class="dark:text-gray-500" />
+                    <select id="metodo_pago" class="block mt-2 w-full rounded-lg border-gray-300 dark:border-gray-400 dark:bg-gray-100 dark:text-gray-600" wire:model.defer="metodo_pago">
                         <option value="">Seleccione un método</option>
                         <option value="efectivo">Efectivo</option>
                         <option value="transferencia">Transferencia</option>
@@ -54,7 +54,7 @@
         
         {{-- Total --}}
         <div class="flex justify-center sticky bottom-0 pt-4">
-            <div class="text-center text-xl font-bold text-gray-800 dark:text-gray-100">
+            <div class="text-center text-xl font-bold text-gray-800">
                 Total: <span class="text-2xl">${{ number_format($total, 2) }}</span> 
             </div>
         </div>
@@ -67,7 +67,7 @@
         </div>
 
     @else
-        <p class="text-gray-500 dark:text-gray-400 text-xl">El carrito está vacío.</p>
+        <p class="text-gray-500 text-xl">El carrito está vacío.</p>
     @endif
 
 </div>
