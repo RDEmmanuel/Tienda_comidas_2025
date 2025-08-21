@@ -1,4 +1,4 @@
-<footer class="w-full bg-red-500 text-gray-700 dark:text-gray-300 flex flex-col justify-between">
+<footer class="w-full bg-red-500 text-gray-700 flex flex-col justify-between">
     <!-- Contenido principal -->
     <div class="max-w-7xl mx-auto w-full grid grid-cols-1 gap-8 px-6 py-10 text-center">
         
@@ -12,7 +12,7 @@
 
         <!-- row 2: Redes -->
         <div>
-            <h3 class="text-lg font-semibold dark:text-gray-200 text-white">Nuestras redes</h3>
+            <h3 class="text-lg font-semibold text-white">Nuestras redes</h3>
             <div class="flex space-x-4 mt-3 justify-center text-white">
                 <a href="#" class="hover:text-blue-500 text-3xl"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="hover:text-blue-500 text-4xl"><i class="fab fa-instagram"></i></a>
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Línea inferior -->
-    <div class="w-full bg-gray-200 dark:bg-gray-800 py-4 text-center text-sm text-gray-600 dark:text-gray-400">
+    <div class="w-full bg-gray-200 py-4 text-center text-sm text-gray-600">
         © {{ date('Y') }} BurgerKing. Todos los derechos reservados.
     </div>
 </footer>
